@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MiniProjet3</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txtEnterIdentifiant">Identifiant : </string>
+    <string name="txtEnterMdp">Mot de passe : </string>
+    <string name="txtConnecter">Se connecter</string>
 </resources>
