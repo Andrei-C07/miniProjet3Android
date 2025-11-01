@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="ca.qc.cgodin.miniprojet3.LoginFragment"
+        android:name="ca.qc.cgodin.miniprojet3.view.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
 </navigation>
