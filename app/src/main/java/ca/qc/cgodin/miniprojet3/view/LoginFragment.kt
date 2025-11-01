@@ -7,6 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import ca.qc.cgodin.miniprojet3.databinding.FragmentLoginBinding
+import ca.qc.cgodin.miniprojet3.model.AuthUtils
+import ca.qc.cgodin.miniprojet3.model.LoginValidator
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.R
+import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import ca.qc.cgodin.miniprojet3.repository.AuthRepository
+import ca.qc.cgodin.miniprojet3.network.RetrofitInstance
 
 class LoginFragment : Fragment() {
 
@@ -19,23 +29,52 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
+    private val viewModel: LoginViewModel by viewModels {
+        LoginViewModelFactory(AuthRepository(RetrofitInstance.api))
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnConnecter.setOnClickListener {
-            val matricule = binding.etIdentifiant.text.toString().trim()
+            val identifiant = binding.etIdentifiant.text.toString().trim()
             val motDePasse = binding.etMdp.text.toString().trim()
+            val validation = LoginValidator.validate(identifiant, motDePasse)
 
-            // if matricule regex ou mot de passe regex invalid, toast message, two separate if statements
-            // if auth details is wrong, toast message
-            val autKey = makeAuthKey(matricule, motDePasse)
-            //ViewModel.login(matricule, motDePasse)
+            when {
+                !validation.isIdentifiantValid -> {
+                    Toast.makeText(requireContext(), "Identifiant invalide (7 chiffres)", Toast.LENGTH_SHORT).show()
+                }
+                !validation.isPasswordValid -> {
+                    Toast.makeText(requireContext(), "Mot de passe invalide (1–6 lettres + 5 chiffres)", Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    val autKey = AuthUtils.makeAuthKey(identifiant, motDePasse)
+                    viewModel.login(identifiant, motDePasse)
+
+                }
+            }
         }
-    }
+        lifecycleScope.launch {
+            viewModel.loginState.collectLatest { state ->
+                when (state) {
+                    is LoginUiState.Idle -> Unit
+                    is LoginUiState.Loading -> {
+                        Toast.makeText(requireContext(), "Connexion en cours...", Toast.LENGTH_SHORT).show()
+                    }
+                    is LoginUiState.Success -> {
+                        Toast.makeText(requireContext(),
+                            "Bienvenue ${state.prenom} ${state.nom}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        // TODO: navigate to ListeSuccursalesFragment
+                        findNavController().navigate(R.id.act)
+                    }
+                    is LoginUiState.Error -> {
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
 
-    private fun makeAuthKey(matricule: String, motDePasse: String): String {
-        val digits = motDePasse.takeLast(5)
-        return matricule + digits
     }
-
 }

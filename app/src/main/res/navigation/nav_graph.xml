@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="ca.qc.cgodin.miniprojet3.view.HomeFragment"
+        android:name="ca.qc.cgodin.miniprojet3.view.ListeSucursales"
         android:label="fragment_home2"
-        tools:layout="@layout/fragment_home2" />
+        tools:layout="@layout/liste_sucursales" />
 </navigation>
