@@ -1,10 +1,11 @@
-package ca.qc.cgodin.miniprojet3
+package ca.qc.cgodin.miniprojet3.view
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import ca.qc.cgodin.miniprojet3.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
