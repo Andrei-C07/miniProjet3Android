@@ -5,4 +5,7 @@
     <string name="txtEnterIdentifiant">Identifiant : </string>
     <string name="txtEnterMdp">Mot de passe : </string>
     <string name="txtConnecter">Se connecter</string>
+    <string name="txtWhoLogged">Sucursale enregistrée par %s</string>
+    <string name="txtNbSucursales">Nombre de sucursales %d</string>
+    <string name="txtLister">Lister</string>
 </resources>
