@@ -7,7 +7,7 @@ import retrofit2.http.Field
 
 interface RetrofitService {
     @FormUrlEncoded
-    @POST("authentification")
+    @POST("students/Connexion")
     suspend fun login(
         @Field("matricule") matricule: String,
         @Field("motdepasse") motDePasse: String

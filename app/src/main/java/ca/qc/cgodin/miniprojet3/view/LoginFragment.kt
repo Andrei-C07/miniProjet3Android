@@ -1,6 +1,7 @@
 package ca.qc.cgodin.miniprojet3.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,7 @@ import ca.qc.cgodin.miniprojet3.model.AuthUtils
 import ca.qc.cgodin.miniprojet3.model.LoginValidator
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.R
+import ca.qc.cgodin.miniprojet3.R
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -38,6 +39,8 @@ class LoginFragment : Fragment() {
         binding.btnConnecter.setOnClickListener {
             val identifiant = binding.etIdentifiant.text.toString().trim()
             val motDePasse = binding.etMdp.text.toString().trim()
+            Log.i("Login", "$identifiant et mdp : $motDePasse")
+
             val validation = LoginValidator.validate(identifiant, motDePasse)
 
             when {
@@ -50,7 +53,6 @@ class LoginFragment : Fragment() {
                 else -> {
                     val autKey = AuthUtils.makeAuthKey(identifiant, motDePasse)
                     viewModel.login(identifiant, motDePasse)
-
                 }
             }
         }
@@ -67,7 +69,7 @@ class LoginFragment : Fragment() {
                             Toast.LENGTH_LONG
                         ).show()
                         // TODO: navigate to ListeSuccursalesFragment
-                        findNavController().navigate(R.id.act)
+                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                     }
                     is LoginUiState.Error -> {
                         Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()

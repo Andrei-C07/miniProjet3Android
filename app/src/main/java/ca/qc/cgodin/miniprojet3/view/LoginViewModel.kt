@@ -1,5 +1,7 @@
 package ca.qc.cgodin.miniprojet3.view
 
+import android.util.Log
+import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.qc.cgodin.miniprojet3.repository.AuthRepository
@@ -44,7 +46,8 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
                         _loginState.value = LoginUiState.Error("Erreur réseau")
 
                     else ->
-                        _loginState.value = LoginUiState.Error("Réponse inattendue du serveur: $result")
+                        //_loginState.value = LoginUiState.Error("Réponse inattendue du serveur: $result")
+                        Log.i("Login",result)
                 }
 
             } catch (e: Exception) {
