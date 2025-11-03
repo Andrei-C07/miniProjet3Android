@@ -65,6 +65,7 @@ class LoginFragment : Fragment() {
                         Toast.makeText(requireContext(), "Connexion en cours...", Toast.LENGTH_SHORT).show()
                     }
                     is LoginUiState.Success -> {
+                        AuthUtils.getUser(state.prenom, state.nom)
                         Toast.makeText(requireContext(),
                             "Bienvenue ${state.prenom} ${state.nom}",
                             Toast.LENGTH_LONG
