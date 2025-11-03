@@ -1,5 +1,6 @@
 package ca.qc.cgodin.miniprojet3.view
 
+import ca.qc.cgodin.miniprojet3.view.LoginViewModel
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -68,6 +69,7 @@ class LoginFragment : Fragment() {
                             "Bienvenue ${state.prenom} ${state.nom}",
                             Toast.LENGTH_LONG
                         ).show()
+                        Log.d("NAV", "Trying to navigate...")
                         // TODO: navigate to ListeSuccursalesFragment
                         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                     }

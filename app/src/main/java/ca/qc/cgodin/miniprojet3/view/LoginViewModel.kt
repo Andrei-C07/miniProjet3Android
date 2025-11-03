@@ -1,7 +1,5 @@
 package ca.qc.cgodin.miniprojet3.view
 
-import android.util.Log
-import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.qc.cgodin.miniprojet3.repository.AuthRepository
@@ -24,34 +22,25 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
     fun login(matricule: String, motDePasse: String) {
         viewModelScope.launch {
             _loginState.value = LoginUiState.Loading
+            val result = repository.authenticate(matricule, motDePasse)
 
-            try {
-                val result = repository.authenticate(matricule, motDePasse)
+            if (result == null) {
+                _loginState.value = LoginUiState.Error("Erreur réseau")
+                return@launch
+            }
 
-                when {
-                    result.startsWith("OK;") -> {
-                        val parts = result.split(";")
-                        val prenom = parts.getOrNull(1) ?: ""
-                        val nom = parts.getOrNull(2) ?: ""
-                        _loginState.value = LoginUiState.Success(prenom, nom)
-                    }
-
-                    result.startsWith("PASOK;") ->
-                        _loginState.value = LoginUiState.Error("Utilisateur inconnu")
-
-                    result.startsWith("ERREUR") ->
-                        _loginState.value = LoginUiState.Error("Erreur du serveur")
-
-                    result.startsWith("EXCEPTION") ->
-                        _loginState.value = LoginUiState.Error("Erreur réseau")
-
-                    else ->
-                        //_loginState.value = LoginUiState.Error("Réponse inattendue du serveur: $result")
-                        Log.i("Login",result)
+            when (result.statut) {
+                "OK" -> {
+                    val prenom = result.student?.Prenom ?: ""
+                    val nom = result.student?.Nom ?: ""
+                    _loginState.value = LoginUiState.Success(prenom, nom)
                 }
-
-            } catch (e: Exception) {
-                _loginState.value = LoginUiState.Error("Erreur réseau : ${e.message}")
+                "PASOK" -> {
+                    _loginState.value = LoginUiState.Error("Utilisateur inconnu")
+                }
+                else -> {
+                    _loginState.value = LoginUiState.Error("Erreur inattendue")
+                }
             }
         }
     }

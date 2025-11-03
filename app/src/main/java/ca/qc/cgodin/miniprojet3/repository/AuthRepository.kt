@@ -1,25 +1,24 @@
 package ca.qc.cgodin.miniprojet3.repository
 
+import ca.qc.cgodin.miniprojet3.network.LoginResponse
 import ca.qc.cgodin.miniprojet3.network.RetrofitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-// retourne le string du server : "OK;Prenom;Nom" ou "PASOK;" ou "ERREUR;"
 class AuthRepository(private val api: RetrofitService) {
 
-    suspend fun authenticate(matricule: String, motDePasse: String): String {
+    suspend fun authenticate(matricule: String, motDePasse: String): LoginResponse? {
         return withContext(Dispatchers.IO) {
             try {
                 val response = api.login(matricule, motDePasse)
                 if (response.isSuccessful) {
-                    response.body()?.trim() ?: ""
+                    response.body()
                 } else {
-                    "ERREUR_HTTP_${response.code()}"
+                    null
                 }
             } catch (e: Exception) {
-                "EXCEPTION_${e.message}"
+                null
             }
         }
     }
 }
-
