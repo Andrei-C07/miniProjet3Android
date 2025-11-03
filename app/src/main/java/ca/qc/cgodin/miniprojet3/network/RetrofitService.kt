@@ -14,7 +14,20 @@ data class Utilisateur(
 
 data class LoginResponse(
     val statut: String,
-    val student: Utilisateur?
+    val utilisateur: Utilisateur?
+)
+
+data class Succursale(
+    val _id: String,
+    val AccessMDP: Long,
+    val Ville: String,
+    val Budget: Int,
+    val __v: Int
+)
+
+data class ListSuccResponse(
+    val statut: String,
+    val succursales: List<Succursale>?
 )
 
 interface RetrofitService {
@@ -24,4 +37,10 @@ interface RetrofitService {
         @Field("Mat") matricule: String,
         @Field("MDP") motDePasse: String
     ):Response<LoginResponse>
+
+    @FormUrlEncoded
+    @POST("succursales/Succursale-Liste")
+    suspend fun listeSuccursales(
+        @Field("Aut") aut: String
+    ): Response<ListSuccResponse>
 }

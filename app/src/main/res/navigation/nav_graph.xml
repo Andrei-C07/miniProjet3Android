@@ -5,6 +5,8 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
+
+
     <fragment
         android:id="@+id/loginFragment"
         android:name="ca.qc.cgodin.miniprojet3.view.LoginFragment"
@@ -18,5 +20,12 @@
         android:id="@+id/homeFragment"
         android:name="ca.qc.cgodin.miniprojet3.view.ListeSucursales"
         android:label="fragment_home2"
-        tools:layout="@layout/liste_sucursales" />
+        tools:layout="@layout/liste_sucursales" >
+
+        <argument
+            android:name="key"
+            app:argType="string"
+            android:defaultValue="default_key" />
+    </fragment>
+
 </navigation>

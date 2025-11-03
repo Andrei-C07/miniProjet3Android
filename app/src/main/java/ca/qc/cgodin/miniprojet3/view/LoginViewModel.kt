@@ -31,8 +31,8 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
 
             when (result.statut) {
                 "OK" -> {
-                    val prenom = result.student?.Prenom ?: ""
-                    val nom = result.student?.Nom ?: ""
+                    val prenom = result.utilisateur?.Prenom ?: ""
+                    val nom = result.utilisateur?.Nom ?: ""
                     _loginState.value = LoginUiState.Success(prenom, nom)
                 }
                 "PASOK" -> {
