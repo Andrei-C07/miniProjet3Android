@@ -1,6 +1,7 @@
 package ca.qc.cgodin.miniprojet3.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +38,7 @@ class BudgetFragment : Fragment() {
         val aut = args.aut
 
         viewModel.fetchBudget(aut, ville)
-
+        Log.d("BudgetDebug", "Ville: $ville, Aut: $aut")
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }

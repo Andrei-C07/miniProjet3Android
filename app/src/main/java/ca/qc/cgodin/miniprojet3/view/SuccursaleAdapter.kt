@@ -9,7 +9,8 @@ import ca.qc.cgodin.miniprojet3.network.Succursale
 class SuccursaleAdapter(
     var items: List<Succursale> = emptyList(),
     private val onDeleteClick: (Succursale) -> Unit,
-    private val onItemClick: (Succursale) -> Unit
+    private val onItemClick: (Succursale) -> Unit,
+    private val onModifyClick: (Succursale) -> Unit
 ) : RecyclerView.Adapter<SuccursaleAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: SucursaleBinding) :
@@ -33,6 +34,10 @@ class SuccursaleAdapter(
 
         holder.binding.root.setOnClickListener {
             onItemClick(succursale)
+        }
+
+        holder.binding.btnModif.setOnClickListener {
+            onModifyClick(succursale)
         }
     }
     fun updateList(newList: List<Succursale>) {

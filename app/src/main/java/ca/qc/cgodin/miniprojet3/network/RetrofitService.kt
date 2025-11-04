@@ -60,6 +60,7 @@ interface RetrofitService {
         @Field("Aut") aut: String,
         @Field("Ville") ville: String
     ): Response<ListSuccResponse>
+    @FormUrlEncoded
     @POST("succursales/Succursale-Budget")
     suspend fun getBudget(
         @Field("Aut") aut: String,

@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -52,6 +53,16 @@ class ListeSucursales : Fragment() {
             onDeleteClick = { succursale ->
 
                 retirerSuccursale(autKey, succursale.Ville)
+            },
+            onModifyClick = { succursale ->
+                findNavController().navigate(
+                    R.id.action_homeFragment_to_modifierSuccursaleFragment,
+                    bundleOf(
+                        "aut" to autKey,
+                        "ville" to succursale.Ville,
+                        "budget" to succursale.Budget
+                    )
+                )
             }
         )
 

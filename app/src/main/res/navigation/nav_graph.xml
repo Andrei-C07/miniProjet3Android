@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_homeFragment_to_ajoutSuccursaleFragment"
             app:destination="@id/ajoutSuccursaleFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_modifierSuccursaleFragment"
+            app:destination="@id/modifierSuccursaleFragment" />
     </fragment>
 
     <fragment
@@ -56,5 +59,15 @@
         <argument
             android:name="aut"
             app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/modifierSuccursaleFragment"
+        android:name="ca.qc.cgodin.miniprojet3.view.ModifierSuccursaleFragment"
+        android:label="Modifier Succursale"
+        tools:layout="@layout/fragment_modifier_succursale">
+        <argument android:name="aut" app:argType="string" />
+        <argument android:name="ville" app:argType="string" />
+        <argument android:name="budget" app:argType="integer" />
     </fragment>
 </navigation>
