@@ -35,6 +35,10 @@ data class BudgetResponse(
     val succursale: Succursale?
 )
 
+data class AjoutResponse(
+    val statut: String,
+)
+
 interface RetrofitService {
     @FormUrlEncoded
     @POST("students/Connexion")
@@ -55,4 +59,12 @@ interface RetrofitService {
         @Field("Aut") aut: String,
         @Field("Ville") ville: String
     ): Response<BudgetResponse>
+
+    @FormUrlEncoded
+    @POST("succursales/Succursale-Ajout")
+    suspend fun ajouterSuccursale(
+        @Field("Aut") aut: String,
+        @Field("Ville") ville: String,
+        @Field("Budget") budget: Int,
+    ): Response<AjoutResponse>
 }

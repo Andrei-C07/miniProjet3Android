@@ -45,6 +45,10 @@ class ListeSucursales : Fragment() {
                 )
             findNavController().navigate(action)
         })
+        binding.fabAdd.setOnClickListener {
+            val action = ListeSucursalesDirections.actionHomeFragmentToAjoutSuccursaleFragment(args.key)
+            findNavController().navigate(action)
+        }
         binding.rvSucursales.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSucursales.adapter = adapter
         binding.rvSucursales.visibility = View.GONE
