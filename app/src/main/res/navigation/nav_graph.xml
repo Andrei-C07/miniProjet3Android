@@ -26,7 +26,35 @@
         <argument
             android:name="utilisateur"
             app:argType="string" />
-
+        <action
+            android:id="@+id/action_homeFragment_to_budgetFragment"
+            app:destination="@id/budgetFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_ajoutSuccursaleFragment"
+            app:destination="@id/ajoutSuccursaleFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="ca.qc.cgodin.miniprojet3.view.BudgetFragment"
+        android:label="fragment_budget"
+        tools:layout="@layout/fragment_budget">
+
+        <argument
+            android:name="ville"
+            app:argType="string" />
+        <argument
+            android:name="aut"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ajoutSuccursaleFragment"
+        android:name="ca.qc.cgodin.miniprojet3.view.AjoutSuccursaleFragment"
+        android:label="fragment_ajout_succursale"
+        tools:layout="@layout/fragment_ajout_succursale">
+        <argument
+            android:name="aut"
+            app:argType="string" />
+    </fragment>
 </navigation>

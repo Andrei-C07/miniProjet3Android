@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ca.qc.cgodin.miniprojet3.databinding.ListeSucursalesBinding
 import kotlinx.coroutines.launch
@@ -39,8 +40,26 @@ class ListeSucursales : Fragment() {
 
         val autKey = args.key
 
-        adapter = SuccursaleAdapter {
-            succursale -> retirerSuccursale(autKey, succursale.Ville)
+        adapter = SuccursaleAdapter(
+            onItemClick = { succursale ->
+                // Navigate to budget/details screen
+                val action = ListeSucursalesDirections
+                    .actionHomeFragmentToBudgetFragment(
+                        ville = succursale.Ville,
+                        aut = autKey
+                    )
+                findNavController().navigate(action)
+            },
+            onDeleteClick = { succursale ->
+                // Delete succursale
+                retirerSuccursale(autKey, succursale.Ville)
+            }
+        )
+
+        binding.fabAdd.setOnClickListener {
+            val action = ListeSucursalesDirections
+                .actionHomeFragmentToAjoutSuccursaleFragment(autKey)
+            findNavController().navigate(action)
         }
         binding.rvSucursales.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSucursales.adapter = adapter
@@ -64,6 +83,23 @@ class ListeSucursales : Fragment() {
 
         binding.btnLister.setOnClickListener {
             binding.rvSucursales.visibility = View.VISIBLE
+            binding.txtNbSucursales.text = getString(R.string.txtLoading)
+
+            viewModel.viewModelScope.launch {
+                try {
+                    val response = RetrofitInstance.api.listeSuccursales(autKey)
+                    if (response.isSuccessful) {
+                        val list = response.body()?.succursales ?: emptyList()
+                        binding.txtNbSucursales.text =
+                            getString(R.string.txtNbSucursales, list.size)
+                        adapter.updateList(list)
+                    } else {
+                        binding.txtNbSucursales.text = "Erreur de chargement"
+                    }
+                } catch (e: Exception) {
+                    binding.txtNbSucursales.text = "Erreur réseau"
+                }
+            }
         }
     }
 

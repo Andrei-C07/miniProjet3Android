@@ -62,7 +62,7 @@ class LoginFragment : Fragment() {
                             when (state) {
                                 is LoginUiState.Success -> {
                                     // Build full user name safely
-                                    val prenom = state.prenom ?: "Utilisateur"
+                                    val prenom = state.prenom ?: "Null"
                                     val nom = state.nom ?: ""
                                     val utilisateur = "$prenom $nom"
 
