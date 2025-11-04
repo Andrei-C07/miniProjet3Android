@@ -5,8 +5,6 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
-
-
     <fragment
         android:id="@+id/loginFragment"
         android:name="ca.qc.cgodin.miniprojet3.view.LoginFragment"
@@ -24,8 +22,11 @@
 
         <argument
             android:name="key"
-            app:argType="string"
-            android:defaultValue="default_key" />
+            app:argType="string" />
+        <argument
+            android:name="utilisateur"
+            app:argType="string" />
+
     </fragment>
 
 </navigation>

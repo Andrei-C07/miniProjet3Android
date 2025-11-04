@@ -4,16 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ca.qc.cgodin.miniprojet3.databinding.ListeSucursalesBinding
-import ca.qc.cgodin.miniprojet3.model.AuthUtils
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.navigation.fragment.navArgs
+import ca.qc.cgodin.miniprojet3.R
+import ca.qc.cgodin.miniprojet3.network.RetrofitInstance
 
 class ListeSucursales : Fragment() {
 
@@ -34,25 +33,34 @@ class ListeSucursales : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val utilisateur = args.utilisateur ?: "Null"
+        binding.tvBienvenue.text = getString(R.string.txtWhoLogged, utilisateur)
+
         adapter = SuccursaleAdapter()
         binding.rvSucursales.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSucursales.adapter = adapter
+        binding.rvSucursales.visibility = View.GONE
 
         val autKey = args.key
-        viewModel.fetchSuccursales(autKey)
 
-        lifecycleScope.launch {
-            viewModel.uiState.collectLatest { state ->
-                when (state) {
-                    is SuccursalesUiState.Idle -> {}
-                    is SuccursalesUiState.Loading ->
-                        Toast.makeText(requireContext(), "Chargement...", Toast.LENGTH_SHORT).show()
-                    is SuccursalesUiState.Success ->
-                        adapter.updateList(state.list)
-                    is SuccursalesUiState.Error ->
-                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
+        viewModel.viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.listeSuccursales(autKey)
+                if (response.isSuccessful && response.body()?.statut == "OK") {
+                    val list = response.body()?.succursales ?: emptyList()
+                    binding.txtNbSucursales.text =
+                        getString(R.string.txtNbSucursales, list.size)
+                    adapter.updateList(list)
+                } else {
+                    binding.txtNbSucursales.text = "Erreur de chargement"
                 }
+            } catch (e: Exception) {
+                binding.txtNbSucursales.text = "Erreur réseau"
             }
+        }
+
+        binding.btnLister.setOnClickListener {
+            binding.rvSucursales.visibility = View.VISIBLE
         }
     }
 }

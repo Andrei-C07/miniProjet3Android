@@ -1,5 +1,6 @@
 package ca.qc.cgodin.miniprojet3.view
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.qc.cgodin.miniprojet3.repository.AuthRepository
@@ -28,11 +29,10 @@ class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
                 _loginState.value = LoginUiState.Error("Erreur réseau")
                 return@launch
             }
-
             when (result.statut) {
                 "OK" -> {
-                    val prenom = result.utilisateur?.Prenom ?: ""
-                    val nom = result.utilisateur?.Nom ?: ""
+                    val prenom = result.student?.Prenom ?: ""
+                    val nom = result.student?.Nom ?: ""
                     _loginState.value = LoginUiState.Success(prenom, nom)
                 }
                 "PASOK" -> {

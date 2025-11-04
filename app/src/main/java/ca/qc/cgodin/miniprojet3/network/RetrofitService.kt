@@ -14,7 +14,7 @@ data class Utilisateur(
 
 data class LoginResponse(
     val statut: String,
-    val utilisateur: Utilisateur?
+    val student: Utilisateur?
 )
 
 data class Succursale(
