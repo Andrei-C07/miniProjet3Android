@@ -32,8 +32,9 @@ class BudgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val ville = arguments?.getString("ville") ?: return
-        val aut = arguments?.getString("aut") ?: return
+        val args = BudgetFragmentArgs.fromBundle(requireArguments())
+        val ville = args.ville
+        val aut = args.aut
 
         viewModel.fetchBudget(aut, ville)
 

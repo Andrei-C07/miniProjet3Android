@@ -42,7 +42,6 @@ class ListeSucursales : Fragment() {
 
         adapter = SuccursaleAdapter(
             onItemClick = { succursale ->
-                // Navigate to budget/details screen
                 val action = ListeSucursalesDirections
                     .actionHomeFragmentToBudgetFragment(
                         ville = succursale.Ville,
@@ -51,7 +50,7 @@ class ListeSucursales : Fragment() {
                 findNavController().navigate(action)
             },
             onDeleteClick = { succursale ->
-                // Delete succursale
+
                 retirerSuccursale(autKey, succursale.Ville)
             }
         )
@@ -63,15 +62,18 @@ class ListeSucursales : Fragment() {
         }
         binding.rvSucursales.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSucursales.adapter = adapter
-        binding.rvSucursales.visibility = View.GONE
+        binding.rvSucursales.visibility = View.VISIBLE
 
         viewModel.viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.listeSuccursales(autKey)
-                if (response.isSuccessful && response.body()?.statut == "OK") {
+                if (response.isSuccessful) {
                     val list = response.body()?.succursales ?: emptyList()
-                    binding.txtNbSucursales.text =
+                    binding.txtNbSucursales.text = if (list.isEmpty()) {
+                        "Aucune succursale enregistrée"
+                    } else {
                         getString(R.string.txtNbSucursales, list.size)
+                    }
                     adapter.updateList(list)
                 } else {
                     binding.txtNbSucursales.text = "Erreur de chargement"
@@ -90,8 +92,12 @@ class ListeSucursales : Fragment() {
                     val response = RetrofitInstance.api.listeSuccursales(autKey)
                     if (response.isSuccessful) {
                         val list = response.body()?.succursales ?: emptyList()
-                        binding.txtNbSucursales.text =
+                        binding.txtNbSucursales.text = if (list.isEmpty()) {
+                            "Aucune succursale enregistrée"
+                        } else {
                             getString(R.string.txtNbSucursales, list.size)
+                        }
+                        binding.rvSucursales.visibility = View.VISIBLE
                         adapter.updateList(list)
                     } else {
                         binding.txtNbSucursales.text = "Erreur de chargement"
@@ -103,20 +109,33 @@ class ListeSucursales : Fragment() {
         }
     }
 
-    private fun retirerSuccursale(autKey: String, ville:String){
+    private fun retirerSuccursale(autKey: String, ville: String) {
+
+        val updatedList = adapter.items.filter { it.Ville != ville }
+        adapter.updateList(updatedList)
+        binding.txtNbSucursales.text =
+            if (updatedList.isEmpty()) "Aucune succursale enregistrée"
+            else getString(R.string.txtNbSucursales, updatedList.size)
+
         viewModel.viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.retirerSuccursale(autKey, ville)
-                if (response.isSuccessful && response.body()?.statut == "OK") {
-                    // Refresh list
-                    val newList = response.body()?.succursales ?: emptyList()
-                    adapter.updateList(newList)
-                } else {
-                    binding.txtNbSucursales.text = "Erreur lors de la suppression"
+                if (!(response.isSuccessful && response.body()?.statut == "OK")) {
+                    // Revert if failed
+                    val listResponse = RetrofitInstance.api.listeSuccursales(autKey)
+                    val originalList = listResponse.body()?.succursales ?: emptyList()
+                    adapter.updateList(originalList)
+                    binding.txtNbSucursales.text =
+                        getString(R.string.txtNbSucursales, originalList.size)
                 }
             } catch (e: Exception) {
-                binding.txtNbSucursales.text = "Erreur réseau"
+                val listResponse = RetrofitInstance.api.listeSuccursales(autKey)
+                val originalList = listResponse.body()?.succursales ?: emptyList()
+                adapter.updateList(originalList)
+                binding.txtNbSucursales.text =
+                    getString(R.string.txtNbSucursales, originalList.size)
             }
         }
     }
+
 }
