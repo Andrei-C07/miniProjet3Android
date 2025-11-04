@@ -1,6 +1,7 @@
 package ca.qc.cgodin.miniprojet3.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,23 +38,48 @@ class ListeSucursales : Fragment() {
         val utilisateur = args.utilisateur ?: "Null"
         binding.tvBienvenue.text = getString(R.string.txtWhoLogged, utilisateur)
 
-        adapter = SuccursaleAdapter(onItemClick = { succursale ->
-            val action = ListeSucursalesDirections
-                .actionHomeFragmentToBudgetFragment(
-                    ville = succursale.Ville,
-                    aut = args.key
-                )
-            findNavController().navigate(action)
-        })
+        val autKey = args.key
+
+        adapter = SuccursaleAdapter(
+            onItemClick = { succursale ->
+                // Navigate to budget/details screen
+                val action = ListeSucursalesDirections
+                    .actionHomeFragmentToBudgetFragment(
+                        ville = succursale.Ville,
+                        aut = autKey
+                    )
+                findNavController().navigate(action)
+            },
+            onDeleteClick = { succursale ->
+                // Delete succursale
+                retirerSuccursale(autKey, succursale.Ville)
+            }
+        )
+
         binding.fabAdd.setOnClickListener {
-            val action = ListeSucursalesDirections.actionHomeFragmentToAjoutSuccursaleFragment(args.key)
+            val action = ListeSucursalesDirections
+                .actionHomeFragmentToAjoutSuccursaleFragment(autKey)
             findNavController().navigate(action)
         }
         binding.rvSucursales.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSucursales.adapter = adapter
         binding.rvSucursales.visibility = View.GONE
 
-        val autKey = args.key
+        viewModel.viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.listeSuccursales(autKey)
+                if (response.isSuccessful && response.body()?.statut == "OK") {
+                    val list = response.body()?.succursales ?: emptyList()
+                    binding.txtNbSucursales.text =
+                        getString(R.string.txtNbSucursales, list.size)
+                    adapter.updateList(list)
+                } else {
+                    binding.txtNbSucursales.text = "Erreur de chargement"
+                }
+            } catch (e: Exception) {
+                binding.txtNbSucursales.text = "Erreur réseau"
+            }
+        }
 
         binding.btnLister.setOnClickListener {
             binding.rvSucursales.visibility = View.VISIBLE
@@ -73,6 +99,23 @@ class ListeSucursales : Fragment() {
                 } catch (e: Exception) {
                     binding.txtNbSucursales.text = "Erreur réseau"
                 }
+            }
+        }
+    }
+
+    private fun retirerSuccursale(autKey: String, ville:String){
+        viewModel.viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.retirerSuccursale(autKey, ville)
+                if (response.isSuccessful && response.body()?.statut == "OK") {
+                    // Refresh list
+                    val newList = response.body()?.succursales ?: emptyList()
+                    adapter.updateList(newList)
+                } else {
+                    binding.txtNbSucursales.text = "Erreur lors de la suppression"
+                }
+            } catch (e: Exception) {
+                binding.txtNbSucursales.text = "Erreur réseau"
             }
         }
     }

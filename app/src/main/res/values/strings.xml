@@ -8,6 +8,8 @@
     <string name="txtWhoLogged">Sucursale enregistrée par %s</string>
     <string name="txtNbSucursales">Nombre de sucursales : %d</string>
     <string name="txtLister">Lister</string>
+    <string name="txtDelete">Supprimer</string>
+    <string name="txtModif">Modifier</string>
     <string name="txtLoading">Chargement ...</string>
     <string name="back">Retour</string>
 </resources>

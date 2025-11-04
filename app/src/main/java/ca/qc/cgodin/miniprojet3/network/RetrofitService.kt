@@ -4,6 +4,7 @@ import retrofit2.Response
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 import retrofit2.http.Field
+import retrofit2.http.HTTP
 
 data class Utilisateur(
     val Matricule: Int,
@@ -54,6 +55,11 @@ interface RetrofitService {
     ): Response<ListSuccResponse>
 
     @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "succursales/Succursale-Retrait", hasBody = true)
+    suspend fun retirerSuccursale(
+        @Field("Aut") aut: String,
+        @Field("Ville") ville: String
+    ): Response<ListSuccResponse>
     @POST("succursales/Succursale-Budget")
     suspend fun getBudget(
         @Field("Aut") aut: String,
