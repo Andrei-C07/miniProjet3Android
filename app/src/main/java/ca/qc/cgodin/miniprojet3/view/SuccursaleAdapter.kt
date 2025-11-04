@@ -8,7 +8,7 @@ import ca.qc.cgodin.miniprojet3.network.Succursale
 
 class SuccursaleAdapter(
     private var items: List<Succursale> = emptyList(),
-    private val onDeleteClick: (Succursale) -> Unit
+    private val onDeleteClick: (Succursale) -> Unit,
     private val onItemClick: (Succursale) -> Unit
 ) : RecyclerView.Adapter<SuccursaleAdapter.ViewHolder>() {
 
@@ -29,6 +29,7 @@ class SuccursaleAdapter(
 
         holder.binding.btnDelete.setOnClickListener {
             onDeleteClick(succursale)
+        }
 
         holder.binding.root.setOnClickListener {
             onItemClick(succursale)
@@ -41,4 +42,5 @@ class SuccursaleAdapter(
         items = newList
         notifyDataSetChanged()
     }
+
 }

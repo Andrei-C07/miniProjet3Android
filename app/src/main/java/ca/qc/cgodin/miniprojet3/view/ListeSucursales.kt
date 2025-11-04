@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +41,37 @@ class ListeSucursales : Fragment() {
         binding.tvBienvenue.text = getString(R.string.txtWhoLogged, utilisateur)
 
         val autKey = args.key
+
+        binding.btnReinitialiser.setOnClickListener {
+
+            lifecycleScope.launch {
+                try {
+                    val response = RetrofitInstance.api.reinitialiser(autKey)
+
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        if (body != null) {
+                            Toast.makeText(requireContext(), "Toutes les succursales ont été supprimées.", Toast.LENGTH_SHORT).show()
+                            adapter.updateList(emptyList())
+                            val list = response.body()?.succursales ?: emptyList()
+                            binding.txtNbSucursales.text =
+                                getString(R.string.txtNbSucursales, list.size)
+                        } else {
+                            Toast.makeText(requireContext(), "Erreur lors de la réinitialisation.", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Log.e("Reinitialiser", "Code: ${response.code()} | Error: ${response.errorBody()?.string()}")
+                        Toast.makeText(requireContext(), "Échec de la requête (${response.code()})", Toast.LENGTH_SHORT).show()
+                    }
+
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Erreur: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
 
         adapter = SuccursaleAdapter(
             onItemClick = { succursale ->
