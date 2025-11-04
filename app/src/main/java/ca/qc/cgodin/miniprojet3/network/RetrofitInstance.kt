@@ -1,9 +1,6 @@
 package ca.qc.cgodin.miniprojet3.network
 
-import com.google.firebase.appdistribution.gradle.ApiService
-import com.google.gson.Gson
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import kotlin.jvm.java
 
 object RetrofitInstance {

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ca.qc.cgodin.miniprojet3.databinding.ListeSucursalesBinding
 import kotlinx.coroutines.launch
@@ -36,31 +37,39 @@ class ListeSucursales : Fragment() {
         val utilisateur = args.utilisateur ?: "Null"
         binding.tvBienvenue.text = getString(R.string.txtWhoLogged, utilisateur)
 
-        adapter = SuccursaleAdapter()
+        adapter = SuccursaleAdapter(onItemClick = { succursale ->
+            val action = ListeSucursalesDirections
+                .actionHomeFragmentToBudgetFragment(
+                    ville = succursale.Ville,
+                    aut = args.key
+                )
+            findNavController().navigate(action)
+        })
         binding.rvSucursales.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSucursales.adapter = adapter
         binding.rvSucursales.visibility = View.GONE
 
         val autKey = args.key
 
-        viewModel.viewModelScope.launch {
-            try {
-                val response = RetrofitInstance.api.listeSuccursales(autKey)
-                if (response.isSuccessful && response.body()?.statut == "OK") {
-                    val list = response.body()?.succursales ?: emptyList()
-                    binding.txtNbSucursales.text =
-                        getString(R.string.txtNbSucursales, list.size)
-                    adapter.updateList(list)
-                } else {
-                    binding.txtNbSucursales.text = "Erreur de chargement"
-                }
-            } catch (e: Exception) {
-                binding.txtNbSucursales.text = "Erreur réseau"
-            }
-        }
-
         binding.btnLister.setOnClickListener {
             binding.rvSucursales.visibility = View.VISIBLE
+            binding.txtNbSucursales.text = getString(R.string.txtLoading)
+
+            viewModel.viewModelScope.launch {
+                try {
+                    val response = RetrofitInstance.api.listeSuccursales(autKey)
+                    if (response.isSuccessful) {
+                        val list = response.body()?.succursales ?: emptyList()
+                        binding.txtNbSucursales.text =
+                            getString(R.string.txtNbSucursales, list.size)
+                        adapter.updateList(list)
+                    } else {
+                        binding.txtNbSucursales.text = "Erreur de chargement"
+                    }
+                } catch (e: Exception) {
+                    binding.txtNbSucursales.text = "Erreur réseau"
+                }
+            }
         }
     }
 }
