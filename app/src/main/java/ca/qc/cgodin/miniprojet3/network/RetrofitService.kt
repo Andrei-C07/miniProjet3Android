@@ -74,4 +74,11 @@ interface RetrofitService {
         @Field("Ville") ville: String,
         @Field("Budget") budget: Int,
     ): Response<AjoutResponse>
+
+    
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "succursales/Succursale-Suppression", hasBody = true)
+    suspend fun reinitialiser(
+        @Field("Aut") aut: String
+    ): Response<ListSuccResponse>
 }
