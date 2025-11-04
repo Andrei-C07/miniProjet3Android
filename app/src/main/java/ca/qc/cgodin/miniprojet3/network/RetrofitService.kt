@@ -30,6 +30,11 @@ data class ListSuccResponse(
     val succursales: List<Succursale>?
 )
 
+data class BudgetResponse(
+    val statut: String,
+    val succursale: Succursale?
+)
+
 interface RetrofitService {
     @FormUrlEncoded
     @POST("students/Connexion")
@@ -43,4 +48,11 @@ interface RetrofitService {
     suspend fun listeSuccursales(
         @Field("Aut") aut: String
     ): Response<ListSuccResponse>
+
+    @FormUrlEncoded
+    @POST("succursales/Succursale-Budget")
+    suspend fun getBudget(
+        @Field("Aut") aut: String,
+        @Field("Ville") ville: String
+    ): Response<BudgetResponse>
 }

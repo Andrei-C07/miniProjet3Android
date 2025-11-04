@@ -26,7 +26,23 @@
         <argument
             android:name="utilisateur"
             app:argType="string" />
+        <action
+            android:id="@+id/action_homeFragment_to_budgetFragment"
+            app:destination="@id/budgetFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="ca.qc.cgodin.miniprojet3.view.BudgetFragment"
+        android:label="fragment_budget"
+        tools:layout="@layout/fragment_budget">
+
+        <argument
+            android:name="ville"
+            app:argType="string" />
+        <argument
+            android:name="aut"
+            app:argType="string" />
     </fragment>
 
 </navigation>
