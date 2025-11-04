@@ -7,7 +7,8 @@ import ca.qc.cgodin.miniprojet3.databinding.SucursaleBinding
 import ca.qc.cgodin.miniprojet3.network.Succursale
 
 class SuccursaleAdapter(
-    private var items: List<Succursale> = emptyList()
+    private var items: List<Succursale> = emptyList(),
+    private val onDeleteClick: (Succursale) -> Unit
 ) : RecyclerView.Adapter<SuccursaleAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: SucursaleBinding) :
@@ -24,6 +25,11 @@ class SuccursaleAdapter(
         val succursale = items[position]
         holder.binding.tvVille.text = succursale.Ville
         holder.binding.tvBudget.text = "Budget: ${succursale.Budget}$"
+
+        holder.binding.btnDelete.setOnClickListener {
+            onDeleteClick(succursale)
+
+        }
     }
 
     override fun getItemCount(): Int = items.size

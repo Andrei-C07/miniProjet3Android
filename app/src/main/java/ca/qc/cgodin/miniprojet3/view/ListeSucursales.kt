@@ -1,6 +1,7 @@
 package ca.qc.cgodin.miniprojet3.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,12 +37,14 @@ class ListeSucursales : Fragment() {
         val utilisateur = args.utilisateur ?: "Null"
         binding.tvBienvenue.text = getString(R.string.txtWhoLogged, utilisateur)
 
-        adapter = SuccursaleAdapter()
+        val autKey = args.key
+
+        adapter = SuccursaleAdapter {
+            succursale -> retirerSuccursale(autKey, succursale.Ville)
+        }
         binding.rvSucursales.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSucursales.adapter = adapter
         binding.rvSucursales.visibility = View.GONE
-
-        val autKey = args.key
 
         viewModel.viewModelScope.launch {
             try {
@@ -61,6 +64,23 @@ class ListeSucursales : Fragment() {
 
         binding.btnLister.setOnClickListener {
             binding.rvSucursales.visibility = View.VISIBLE
+        }
+    }
+
+    private fun retirerSuccursale(autKey: String, ville:String){
+        viewModel.viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.retirerSuccursale(autKey, ville)
+                if (response.isSuccessful && response.body()?.statut == "OK") {
+                    // Refresh list
+                    val newList = response.body()?.succursales ?: emptyList()
+                    adapter.updateList(newList)
+                } else {
+                    binding.txtNbSucursales.text = "Erreur lors de la suppression"
+                }
+            } catch (e: Exception) {
+                binding.txtNbSucursales.text = "Erreur réseau"
+            }
         }
     }
 }
